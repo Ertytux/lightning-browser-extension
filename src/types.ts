@@ -166,6 +166,9 @@ export interface MessageAccountSelect extends MessageDefault {
 export interface MessageAllowanceList extends Omit<MessageDefault, "args"> {
   action: "listAllowances";
 }
+export interface MessageInvoices extends Omit<MessageDefault, "args"> {
+  action: "getInvoices";
+}
 
 interface LNURLChannelServiceResponse {
   uri: string; // Remote node address of form node_key@ip_address:port_number
