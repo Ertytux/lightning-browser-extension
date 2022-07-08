@@ -7,7 +7,7 @@ const setIcon = async (message, sender) => {
     off: "alby_icon_sleeping",
   };
   const name = names[message.args.icon];
-  return browser.browserAction
+  return browser.action
     .setIcon({
       path: {
         16: `assets/icons/${name}_16x16.png`,

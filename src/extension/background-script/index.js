@@ -20,6 +20,7 @@ const extractLightningData = (tabId, changeInfo, tab) => {
     // Adding a short delay because I've seen cases where this call has happened too fast
     // before the receiving side in the content-script was connected/listening
     setTimeout(() => {
+      // double check: https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#alarms
       browser.tabs.sendMessage(tabId, {
         action: "extractLightningData",
       });
@@ -49,7 +50,7 @@ const updateIcon = async (tabId, changeInfo, tabInfo) => {
   } else {
     name = names.off;
   }
-  return browser.browserAction.setIcon({
+  return browser.action.setIcon({
     path: {
       16: `assets/icons/${name}_16x16.png`,
       32: `assets/icons/${name}_32x32.png`,
