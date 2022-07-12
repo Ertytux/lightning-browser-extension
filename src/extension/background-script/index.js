@@ -1,3 +1,4 @@
+import axios, { AxiosRequestConfig, Method } from "axios";
 import browser from "webextension-polyfill";
 import utils from "~/common/lib/utils";
 

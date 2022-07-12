@@ -95,8 +95,12 @@ export default function NewWallet() {
     };
 
     try {
+      console.log("TRY");
+
       const validation = await utils.call("validateAccount", account);
+      console.log("validation", validation);
       if (validation.valid) {
+        console.log("validation - valid", validation.valid);
         const addResult = await utils.call("addAccount", account);
         if (addResult.accountId) {
           await utils.call("selectAccount", {
@@ -105,17 +109,20 @@ export default function NewWallet() {
           navigate("/test-connection");
         }
       } else {
+        console.log("validation - ELSE", validation);
         console.error({ validation });
         toast.error(
           `${tCommon("errors.connection_failed")} (${validation.error})`
         );
       }
     } catch (e) {
+      console.log("validation - CATCH", e);
       console.error(e);
       if (e instanceof Error) {
         toast.error(`${tCommon("errors.connection_failed")} (${e.message})`);
       }
     } finally {
+      console.log("validation - FINALLY");
       setLoading(false);
     }
   }

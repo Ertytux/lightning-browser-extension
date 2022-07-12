@@ -48,6 +48,8 @@ export default class LndHub implements Connector {
   }
 
   async init() {
+    console.log("INIT?!");
+
     return this.authorize();
   }
 
@@ -286,30 +288,50 @@ export default class LndHub implements Connector {
   }
 
   async authorize() {
-    const { data: authData } = await axios.post(
-      `${this.config.url}/auth?type=auth`,
-      {
+    console.log("AUTHORIZE - config url: ", this.config.url);
+
+    const res = await fetch(`${this.config.url}/auth?type=auth`, {
+      method: "POST",
+      headers: defaultHeaders,
+      body: JSON.stringify({
         login: this.config.login,
         password: this.config.password,
-      },
-      {
-        headers: defaultHeaders,
+      }),
+    });
+
+    console.log("RES: ", res);
+
+    try {
+      const { data: authData } = await axios.post(
+        `${this.config.url}/auth?type=auth`,
+        {
+          login: this.config.login,
+          password: this.config.password,
+        },
+        {
+          headers: defaultHeaders,
+        }
+      );
+
+      console.log("AUTHORIZE - data", authData);
+
+      if (authData.error || authData.errors) {
+        const error = authData.error || authData.errors;
+        const errMessage = error?.errors?.[0]?.message || error?.[0]?.message;
+
+        console.error(errMessage);
+        throw new Error("API error: " + errMessage);
+      } else {
+        this.refresh_token = authData.refresh_token;
+        this.access_token = authData.access_token;
+        this.refresh_token_created = +new Date();
+        this.access_token_created = +new Date();
+
+        return authData;
       }
-    );
-
-    if (authData.error || authData.errors) {
-      const error = authData.error || authData.errors;
-      const errMessage = error?.errors?.[0]?.message || error?.[0]?.message;
-
-      console.error(errMessage);
-      throw new Error("API error: " + errMessage);
-    } else {
-      this.refresh_token = authData.refresh_token;
-      this.access_token = authData.access_token;
-      this.refresh_token_created = +new Date();
-      this.access_token_created = +new Date();
-
-      return authData;
+    } catch (e) {
+      // https://stackoverflow.com/questions/72798574/axios-error-typeerror-adapter-is-not-a-function
+      console.log("AUTHORIZE - CATCH", e);
     }
   }
 
